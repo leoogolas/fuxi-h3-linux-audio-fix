@@ -1,22 +1,36 @@
 # Fuxi H3 Linux Audio Fix
 
-Fix stereo audio and synchronize the hardware PCM volume control with the desktop volume slider for the **Fuxi H3 USB headset** on Linux.
+A small helper for people using the **Fuxi H3 USB headset on Linux**.
 
-This project addresses a setup where changing the desktop volume does not correctly update the headset's ALSA PCM control, while preserving stereo output.
+If your headset's sound or volume control is not behaving as expected, this project may help keep the headset's internal volume level in sync with the volume slider on your desktop.
 
-> **Test status:** The original procedure was developed and tested on Bazzite with the Fuxi H3. Other Linux distributions using PipeWire, WirePlumber, ALSA and systemd user services may work, but are not yet independently verified.
+You do not need to be a Linux expert to try it. The installer checks whether your headset is recognized before making any changes.
 
-## Features
+## Is this for me?
 
-- Synchronizes the Fuxi H3 ALSA `PCM,1` control with the default PipeWire audio sink volume.
-- Runs as a systemd user service and starts automatically at login.
-- Does not require root privileges for installation.
-- Includes an uninstall script.
-- Checks for the expected headset and required commands before installation.
+This project was created for the Fuxi H3 USB headset.
 
-## Quick install
+It was originally tested on **Bazzite**. It may also work on other Linux distributions, but those have not been tested yet.
 
-Open a terminal and run:
+If you use a different headset, this project probably is not what you need.
+
+## Install
+
+1. Connect your Fuxi H3 headset to your computer.
+2. Open the **Terminal** app. You can usually find it by searching for "Terminal" in your applications.
+3. Copy the command below, paste it into the Terminal, and press Enter:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/leoogolas/fuxi-h3-linux-audio-fix/main/install.sh | bash
+```
+
+The installer will check whether your Fuxi H3 is detected and whether the required audio tools are available. If something is missing or your headset is not recognized, it will stop and show an error instead of continuing.
+
+**You do not need to run this command with `sudo` or as administrator.**
+
+### Prefer to inspect the installer first?
+
+That is completely fine. You can download the file, read it, and run it yourself:
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/leoogolas/fuxi-h3-linux-audio-fix/main/install.sh -o /tmp/fuxi-h3-install.sh
@@ -24,53 +38,35 @@ less /tmp/fuxi-h3-install.sh
 bash /tmp/fuxi-h3-install.sh
 ```
 
-The commands download the installer to a temporary file so you can inspect it with `less` before running it. You can also clone or download this repository and run `bash install.sh` locally. If you have reviewed the script and prefer a one-line install, run `curl -fsSL https://raw.githubusercontent.com/leoogolas/fuxi-h3-linux-audio-fix/main/install.sh | bash`.
+In the text viewer, press `q` to exit after reviewing the file.
 
-## Requirements
+## What happens after installation?
 
-- Fuxi H3 USB headset connected.
-- ALSA identifies the card as `FuxiH3`.
-- The card exposes the ALSA mixer control `PCM,1`.
-- `wpctl` (PipeWire/WirePlumber), `amixer` (ALSA utilities), `systemctl`, and Bash.
-- A Linux session with systemd user services.
+The helper runs quietly in the background and starts automatically when you log in.
 
-The installer does not install missing system packages automatically. Install the relevant PipeWire/WirePlumber and ALSA utilities packages through your distribution's package manager if needed.
+It reads the volume level of your default audio output and updates the Fuxi H3's internal PCM volume control to match it. In everyday use, you should be able to keep using your desktop volume slider as usual.
 
-## What the installer does
+The installer creates two small files in your personal home folder. It does not change system-wide configuration files or install additional system packages.
 
-1. Checks the required commands.
-2. Detects the Fuxi H3 ALSA card and verifies the `PCM,1` mixer control.
-3. Creates `~/.local/bin/fuxi-volume-sync.sh`.
-4. Installs a systemd user service at `~/.config/systemd/user/fuxi-h3-fix.service`.
-5. Enables and starts the service.
+## How can I check if it worked?
 
-No system-wide configuration files are changed.
+After installation, change the volume using your normal desktop volume controls.
 
-## Verify
+The helper should keep the headset's internal volume level in sync. You do not need to open the Terminal every time you use your headset.
 
-Check the service:
-
-```bash
-systemctl --user status fuxi-h3-fix.service
-```
-
-Inspect the ALSA PCM control:
-
-```bash
-amixer -c FuxiH3 sget 'PCM,1'
-```
-
-Change the desktop volume slider and check whether the PCM percentage follows it.
-
-View service logs:
-
-```bash
-journalctl --user -u fuxi-h3-fix.service -f
-```
+If the sound still does not behave as expected, see the troubleshooting section below.
 
 ## Uninstall
 
-Download and inspect the uninstall script, then run it:
+If you want to remove the helper, open the Terminal and run:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/leoogolas/fuxi-h3-linux-audio-fix/main/uninstall.sh | bash
+```
+
+This stops the background helper and removes the two files created by the installer. It does not remove or change your system's audio packages.
+
+You can also download and inspect the uninstall script before running it:
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/leoogolas/fuxi-h3-linux-audio-fix/main/uninstall.sh -o /tmp/fuxi-h3-uninstall.sh
@@ -78,50 +74,45 @@ less /tmp/fuxi-h3-uninstall.sh
 bash /tmp/fuxi-h3-uninstall.sh
 ```
 
-It stops and disables the user service and removes the two files installed by this project. It does not remove ALSA, PipeWire, or other system packages.
-
 ## Troubleshooting
 
-**The installer cannot find the headset**
+**The installer says it cannot find my headset**
 
-Make sure the Fuxi H3 is connected, then run:
+Make sure the Fuxi H3 is connected, then try unplugging it and connecting it again. If the message continues, your Linux system may be identifying the headset differently.
 
-```bash
-cat /proc/asound/cards
-```
+**The installer says a required command is missing**
 
-The card should have the identifier `FuxiH3`.
+The installer does not install other programs for you. It needs the audio tools that come with your Linux distribution. If you are not sure how to install them, open an issue and mention which Linux distribution you use.
 
-**The PCM control is missing**
+**Nothing changed after installation**
 
-Run:
+Try logging out and back in, or restarting your computer. If the problem remains, open an issue and describe what is happening.
 
-```bash
-amixer -c FuxiH3 scontrols
-```
+When reporting a problem, please mention your Linux distribution (for example, Bazzite or Fedora) and whether the installer displayed an error.
 
-This project currently expects the control named `PCM,1`. If your device exposes a different control, open an issue with the output of these commands.
+## For advanced users
 
-**The service is not running**
+The helper synchronizes the Fuxi H3 ALSA `PCM,1` mixer control with the default PipeWire audio output reported by `wpctl`. It runs as a systemd user service and checks the volume periodically.
+
+To check whether the service is running:
 
 ```bash
 systemctl --user status fuxi-h3-fix.service
-journalctl --user -u fuxi-h3-fix.service --no-pager -n 50
 ```
 
-## Compatibility and limitations
+To view its logs:
 
-The script follows the default PipeWire sink reported by `wpctl` and writes its volume percentage to the Fuxi H3 ALSA PCM control. It clamps values above 100% to 100%.
+```bash
+journalctl --user -u fuxi-h3-fix.service -f
+```
 
-The service polls the volume periodically. This is a lightweight workaround, not a native PipeWire integration. If you use multiple audio outputs, the default sink must be the Fuxi H3 for the expected behavior.
+The expected audio setup uses PipeWire, WirePlumber, ALSA utilities, and systemd user services. The default audio output should be the Fuxi H3 for the volume synchronization to behave as expected.
 
-## Search keywords
+## Help improve this project
 
-Fuxi H3 Linux, Fuxi H3 Bazzite, Fuxi H3 audio fix, Fuxi H3 stereo, USB headset mono audio fix, Linux USB headset stereo, PipeWire volume synchronization, ALSA PCM volume, Bazzite audio troubleshooting, Fedora headset audio, Linux headset volume control.
+This started as a fix for my own Fuxi H3 headset on Bazzite. If you try it on another Linux distribution, please share whether it worked.
 
-## Contributing
-
-Bug reports and tested compatibility notes for other distributions are welcome. Please include your distribution, desktop environment, audio stack, and the output of `cat /proc/asound/cards` and `amixer -c FuxiH3 scontrols`.
+You can report a problem or share your experience by opening an issue in this repository. Please include your Linux distribution and a description of what happened.
 
 ## License
 
