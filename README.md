@@ -2,9 +2,11 @@
 
 A small helper for people using the **Fuxi H3 USB headset on Linux**.
 
-If your headset's sound or volume control is not behaving as expected, this project may help keep the headset's internal volume level in sync with the volume slider on your desktop.
+This project keeps the headset's internal PCM volume control in sync with the volume slider on your desktop. It was created to help with a volume-control issue on the Fuxi H3.
 
-You do not need to be a Linux expert to try it. The installer checks whether your headset is recognized before making any changes.
+You do not need to be a Linux expert to try it. The installer checks whether your headset is recognized before making changes.
+
+**Important:** this helper synchronizes volume levels. It does not change Linux's audio channel layout or independently switch mono audio to stereo.
 
 ## Is this for me?
 
@@ -18,27 +20,31 @@ If you use a different headset, this project probably is not what you need.
 
 1. Connect your Fuxi H3 headset to your computer.
 2. Open the **Terminal** app. You can usually find it by searching for "Terminal" in your applications.
-3. Copy the command below, paste it into the Terminal, and press Enter:
-
-```bash
-curl -fsSL https://raw.githubusercontent.com/leoogolas/fuxi-h3-linux-audio-fix/main/install.sh | bash
-```
-
-The installer will check whether your Fuxi H3 is detected and whether the required audio tools are available. If something is missing or your headset is not recognized, it will stop and show an error instead of continuing.
-
-**You do not need to run this command with `sudo` or as administrator.**
-
-### Prefer to inspect the installer first?
-
-That is completely fine. You can download the file, read it, and run it yourself:
+3. Copy the following command, paste it into the Terminal, and press Enter. This downloads the installer:
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/leoogolas/fuxi-h3-linux-audio-fix/main/install.sh -o /tmp/fuxi-h3-install.sh
+```
+
+4. To review the installer before running it, enter:
+
+```bash
 less /tmp/fuxi-h3-install.sh
+```
+
+Press `q` to close the text viewer.
+
+5. When you are ready, run the installer:
+
+```bash
 bash /tmp/fuxi-h3-install.sh
 ```
 
-In the text viewer, press `q` to exit after reviewing the file.
+The installer checks whether your Fuxi H3 is detected and whether the required audio tools are available. If something is missing or your headset is not recognized, it stops and displays an error.
+
+**You do not need to run these commands with `sudo` or as administrator.**
+
+If you already had a manual version of this fix installed, the installer saves copies of the previous script and service file in a backup folder in your home directory before replacing them.
 
 ## What happens after installation?
 
@@ -48,47 +54,49 @@ It reads the volume level of your default audio output and updates the Fuxi H3's
 
 The installer creates two small files in your personal home folder. It does not change system-wide configuration files or install additional system packages.
 
+For the volume synchronization to work as expected, the Fuxi H3 should be selected as your computer's default audio output.
+
 ## How can I check if it worked?
 
 After installation, change the volume using your normal desktop volume controls.
 
 The helper should keep the headset's internal volume level in sync. You do not need to open the Terminal every time you use your headset.
 
-If the sound still does not behave as expected, see the troubleshooting section below.
+If your sound is still mono after installation, this helper alone may not solve that channel-layout issue. See the troubleshooting section or ask for help before changing other audio settings.
 
 ## Uninstall
 
-If you want to remove the helper, open the Terminal and run:
-
-```bash
-curl -fsSL https://raw.githubusercontent.com/leoogolas/fuxi-h3-linux-audio-fix/main/uninstall.sh | bash
-```
-
-This stops the background helper and removes the two files created by the installer. It does not remove or change your system's audio packages.
-
-You can also download and inspect the uninstall script before running it:
+If you want to remove the helper, download the uninstall script:
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/leoogolas/fuxi-h3-linux-audio-fix/main/uninstall.sh -o /tmp/fuxi-h3-uninstall.sh
-less /tmp/fuxi-h3-uninstall.sh
+```
+
+You can inspect it with `less /tmp/fuxi-h3-uninstall.sh` and press `q` to close the viewer. Then run:
+
+```bash
 bash /tmp/fuxi-h3-uninstall.sh
 ```
+
+This stops the background helper and removes the two files installed by this project. It does not remove or change your system's audio packages. If the installer created a backup of your previous setup, that backup folder is left in your home directory.
 
 ## Troubleshooting
 
 **The installer says it cannot find my headset**
 
-Make sure the Fuxi H3 is connected, then try unplugging it and connecting it again. If the message continues, your Linux system may be identifying the headset differently.
+Make sure the Fuxi H3 is connected, wait a few seconds, and try again. If the message continues, your Linux system may be identifying the headset differently.
 
-**The installer says a required command is missing**
+**The installer says a required tool is missing**
 
-The installer does not install other programs for you. It needs the audio tools that come with your Linux distribution. If you are not sure how to install them, open an issue and mention which Linux distribution you use.
+The installer does not install other programs for you. It needs audio tools that are normally provided by your Linux distribution. If you are not sure how to install them, ask for help and mention which Linux distribution you use.
+
+**The sound is still mono**
+
+This helper synchronizes the headset's volume control. It does not change the audio channel layout. If the sound remains mono, tell us which Linux distribution you use and what happens after installation before trying other commands.
 
 **Nothing changed after installation**
 
-Try logging out and back in, or restarting your computer. If the problem remains, open an issue and describe what is happening.
-
-When reporting a problem, please mention your Linux distribution (for example, Bazzite or Fedora) and whether the installer displayed an error.
+Make sure the Fuxi H3 is selected as the default audio output. If the problem remains, ask for help and include any error message shown by the installer.
 
 ## For advanced users
 
