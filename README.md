@@ -20,29 +20,15 @@ If you use a different headset, this project probably is not what you need.
 
 1. Connect your Fuxi H3 headset to your computer.
 2. Open the **Terminal** app. You can usually find it by searching for "Terminal" in your applications.
-3. Copy the following command, paste it into the Terminal, and press Enter. This downloads the installer:
+3. Copy the following command, paste it into the Terminal, and press Enter:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/leoogolas/fuxi-h3-linux-audio-fix/main/install.sh -o /tmp/fuxi-h3-install.sh
-```
-
-4. To review the installer before running it, enter:
-
-```bash
-less /tmp/fuxi-h3-install.sh
-```
-
-Press `q` to close the text viewer.
-
-5. When you are ready, run the installer:
-
-```bash
-bash /tmp/fuxi-h3-install.sh
+curl -fsSL https://raw.githubusercontent.com/leoogolas/fuxi-h3-linux-audio-fix/main/install.sh | bash
 ```
 
 The installer checks whether your Fuxi H3 is detected and whether the required audio tools are available. If something is missing or your headset is not recognized, it stops and displays an error.
 
-**You do not need to run these commands with `sudo` or as administrator.**
+**You do not need to run this command with `sudo` or as administrator.**
 
 If you already had a manual version of this fix installed, the installer saves copies of the previous script and service file in a backup folder in your home directory before replacing them.
 
@@ -66,16 +52,10 @@ If your sound is still mono after installation, this helper alone may not solve 
 
 ## Uninstall
 
-If you want to remove the helper, download the uninstall script:
+If you want to remove the helper, open the Terminal and run:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/leoogolas/fuxi-h3-linux-audio-fix/main/uninstall.sh -o /tmp/fuxi-h3-uninstall.sh
-```
-
-You can inspect it with `less /tmp/fuxi-h3-uninstall.sh` and press `q` to close the viewer. Then run:
-
-```bash
-bash /tmp/fuxi-h3-uninstall.sh
+curl -fsSL https://raw.githubusercontent.com/leoogolas/fuxi-h3-linux-audio-fix/main/uninstall.sh | bash
 ```
 
 This stops the background helper and removes the two files installed by this project. It does not remove or change your system's audio packages. If the installer created a backup of your previous setup, that backup folder is left in your home directory.
