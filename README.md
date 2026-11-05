@@ -24,7 +24,7 @@ less /tmp/fuxi-h3-install.sh
 bash /tmp/fuxi-h3-install.sh
 ```
 
-The installer checks the downloaded script's contents before execution. You can also clone or download this repository and run `bash install.sh` locally.
+The commands download the installer to a temporary file so you can inspect it with `less` before running it. You can also clone or download this repository and run `bash install.sh` locally. If you have reviewed the script and prefer a one-line install, run `curl -fsSL https://raw.githubusercontent.com/leoogolas/fuxi-h3-linux-audio-fix/main/install.sh | bash`.
 
 ## Requirements
 
